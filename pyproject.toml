@@ -1,0 +1,21 @@
+# от он наш ktlint
+[tool.black]
+line-length = 88
+target-version = ["py313"]
+
+[tool.ruff]
+line-length = 88
+
+# покрытие
+[tool.pytest.ini_options]
+addopts = """
+    --cov=calculator
+    --cov-report=html
+    --cov-report=term-missing
+"""
+pythonpath = "."  # чтобы импортировать модули нормально, а не мучиться
+
+# для сборки
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

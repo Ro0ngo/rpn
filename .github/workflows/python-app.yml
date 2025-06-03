@@ -1,0 +1,42 @@
+name: Python CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code  # достаём код из репозитория
+        uses: actions/checkout@v4
+
+      - name: Set up Python  # ставим нужную версию питона
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black ruff pytest pytest-cov
+
+      - name: Run black  # проверка кода на стиль
+        run: black --check
+
+      - name: Run ruff  # линтер, подскажет, где глупости
+        run: ruff check .
+
+      - name: Run tests with coverage  # запускаем тесты + собираем покрытие
+        run: |
+          cd reverse_polish_entry  # ну у меня так проект лежит
+          pytest --cov=calculator --cov-report=html
+
+      - name: Upload coverage report  # заливаем HTML-отчёт как артефакт
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: reverse_polish_entry/htmlcov
